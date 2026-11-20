@@ -31,7 +31,11 @@ struct DeviceInfo: DeviceInfoProviding {
 
     var osVersion: String {
         #if canImport(UIKit)
-        UIDevice.current.systemVersion
+        // ProcessInfo is non-MainActor, so this stays a synchronous, Sendable
+        // getter that ProbeRunner can call from a background Task.
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let base = "\(version.majorVersion).\(version.minorVersion)"
+        return version.patchVersion == 0 ? base : "\(base).\(version.patchVersion)"
         #else
         Self.fallback.osVersion
         #endif
