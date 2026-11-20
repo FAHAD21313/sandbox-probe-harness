@@ -1,6 +1,7 @@
 public protocol ProbeStoring: Sendable {
     func save(_ record: ProbeRunRecord) async throws
     func all() async throws -> [ProbeRunRecord]
+    func deleteAll() async throws
 }
 
 public actor InMemoryProbeStore: ProbeStoring {
@@ -14,5 +15,9 @@ public actor InMemoryProbeStore: ProbeStoring {
 
     public func all() async throws -> [ProbeRunRecord] {
         records
+    }
+
+    public func deleteAll() async throws {
+        records.removeAll()
     }
 }

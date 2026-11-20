@@ -23,10 +23,10 @@ struct LogListView: View {
                 }
             }
         }
-        .navigationTitle("السجل")
+        .navigationTitle("Log")
         .task { await load() }
-        .alert("خطأ", isPresented: $showingAlert) {
-            Button("حسناً", role: .cancel) {}
+        .alert("Error", isPresented: $showingAlert) {
+            Button("OK", role: .cancel) {}
         } message: {
             Text(alertMessage ?? "")
         }

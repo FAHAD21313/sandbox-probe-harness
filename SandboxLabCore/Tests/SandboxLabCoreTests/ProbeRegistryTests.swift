@@ -24,4 +24,15 @@ final class ProbeRegistryTests: XCTestCase {
         let stored = try await store.all()
         XCTAssertEqual(stored, [record])
     }
+
+    func testInMemoryStoreDeleteAllEmptiesStore() async throws {
+        let store = InMemoryProbeStore()
+        let record = await ProbeRunner().run(StubProbe(result: .success("x")), device: UnknownDeviceInfo(), now: { Date(timeIntervalSince1970: 0) })
+        try await store.save(record)
+        let before = try await store.all()
+        XCTAssertEqual(before.count, 1)
+        try await store.deleteAll()
+        let after = try await store.all()
+        XCTAssertTrue(after.isEmpty)
+    }
 }

@@ -8,12 +8,12 @@ public enum ProbeCategory: String, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .filesystem: return "نظام الملفات"
-        case .processes: return "العمليات والإقلاع"
-        case .memoryExecution: return "الذاكرة وحماية التنفيذ"
-        case .dylibLoading: return "تحميل المكتبات"
-        case .network: return "الشبكة والمنافذ"
-        case .entitlements: return "الصلاحيات"
+        case .filesystem: return "File System"
+        case .processes: return "Processes & Boot"
+        case .memoryExecution: return "Memory & Execution Protection"
+        case .dylibLoading: return "Dylib Loading"
+        case .network: return "Network & Ports"
+        case .entitlements: return "Entitlements"
         }
     }
 }

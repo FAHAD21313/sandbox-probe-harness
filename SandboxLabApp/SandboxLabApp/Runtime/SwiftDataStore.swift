@@ -78,4 +78,13 @@ actor SwiftDataStore: ProbeStoring {
         )
         return try context.fetch(descriptor).map(\.record)
     }
+
+    func deleteAll() async throws {
+        let context = ModelContext(container)
+        let entities = try context.fetch(FetchDescriptor<ProbeRunEntity>())
+        for entity in entities {
+            context.delete(entity)
+        }
+        try context.save()
+    }
 }

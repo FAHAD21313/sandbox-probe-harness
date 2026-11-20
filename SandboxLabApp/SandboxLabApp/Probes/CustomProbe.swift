@@ -3,7 +3,7 @@ import SandboxLabCore
 
 struct CustomProbe: SecurityProbe {
     let id = "custom"
-    let title = "اختبار مخصص"
+    let title = "Custom Probe"
     let category: ProbeCategory = .filesystem
 
     func body() async throws -> String {

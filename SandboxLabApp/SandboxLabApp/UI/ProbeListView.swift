@@ -6,6 +6,7 @@ struct ProbeListView: View {
     let device: any DeviceInfoProviding
     let runner: ProbeRunner
     let store: SwiftDataStore
+    let console: ConsoleStore
 
     @State private var alertMessage: String?
     @State private var showingAlert = false
@@ -31,55 +32,81 @@ struct ProbeListView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                Button("تشغيل") { run(row.probe) }
+                                Button("Run") { run(row.probe) }
                                     .buttonStyle(.borderedProminent)
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("مختبر الساندبوكس")
+            .navigationTitle("Sandbox Lab")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink("السجل") {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    NavigationLink("Log") {
                         LogListView(store: store)
+                    }
+                    NavigationLink("Console") {
+                        ConsoleView(store: console)
+                    }
+                    NavigationLink("Settings") {
+                        SettingsView(store: store)
                     }
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                Button("تشغيل الكل") { runAll() }
+                Button("Run All") { runAll() }
                     .buttonStyle(.borderedProminent)
                     .padding()
             }
-            .alert("خطأ", isPresented: $showingAlert) {
-                Button("حسناً", role: .cancel) {}
+            .alert("Error", isPresented: $showingAlert) {
+                Button("OK", role: .cancel) {}
             } message: {
                 Text(alertMessage ?? "")
             }
         }
     }
 
+    @MainActor
     private func run(_ probe: any SecurityProbe) {
         Task {
-            let record = await runner.run(probe, device: device)
+            let record = await execute(probe)
             await persist(record)
         }
     }
 
+    @MainActor
     private func runAll() {
         Task {
-            let records = await runner.runAll(probes, device: device)
+            var records: [ProbeRunRecord] = []
+            for probe in probes {
+                records.append(await execute(probe))
+            }
             for record in records {
                 await persist(record)
             }
         }
     }
 
+    /// Runs one probe and mirrors its raw observation into the live console.
+    @MainActor
+    private func execute(_ probe: any SecurityProbe) async -> ProbeRunRecord {
+        await console.log("Running \(probe.id)...")
+        let record = await runner.run(probe, device: device)
+        for line in record.output.split(separator: "\n") {
+            await console.log(String(line))
+        }
+        await console.log("Finished \(record.probeID) in \(record.durationMs) ms")
+        return record
+    }
+
+    @MainActor
     private func persist(_ record: ProbeRunRecord) async {
         do {
             try await store.save(record)
         } catch {
-            alertMessage = error.localizedDescription
+            let message = error.localizedDescription
+            await console.log(message)
+            alertMessage = message
             showingAlert = true
         }
     }

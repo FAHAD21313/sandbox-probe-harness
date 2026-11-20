@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import SandboxLabCore
 
+@MainActor
 @main
 struct SandboxLabApp: App {
     private let container: ModelContainer
@@ -9,6 +10,8 @@ struct SandboxLabApp: App {
     private let device = DeviceInfo()
     private let runner = ProbeRunner()
     private let probes = AppProbeRegistry.probes
+
+    @StateObject private var console = ConsoleStore()
 
     init() {
         do {
@@ -21,7 +24,13 @@ struct SandboxLabApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ProbeListView(probes: probes, device: device, runner: runner, store: store)
+            ProbeListView(
+                probes: probes,
+                device: device,
+                runner: runner,
+                store: store,
+                console: console
+            )
         }
         .modelContainer(container)
     }

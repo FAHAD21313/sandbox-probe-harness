@@ -6,13 +6,13 @@ struct RunDetailView: View {
 
     var body: some View {
         List {
-            Section("النص الخام") {
+            Section("Raw Output") {
                 Text(record.output.isEmpty ? "—" : record.output)
                     .textSelection(.enabled)
                     .font(.system(.body, design: .monospaced))
             }
 
-            Section("الخطأ") {
+            Section("Error") {
                 if let domain = record.errorDomain {
                     LabeledContent("domain", value: domain)
                 }
@@ -27,17 +27,17 @@ struct RunDetailView: View {
                 }
                 if record.errorDomain == nil, record.errorCode == nil,
                    record.rawErrno == nil, record.errorMessage == nil {
-                    Text("لا يوجد خطأ")
+                    Text("No error")
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section("الزمن والجهاز") {
-                LabeledContent("المدة", value: "\(record.durationMs) ms")
-                LabeledContent("البداية", value: record.startedAt.formatted(date: .complete, time: .complete))
-                LabeledContent("الجهاز", value: record.deviceModel)
-                LabeledContent("إصدار iOS", value: record.osVersion)
-                LabeledContent("رقم البناء", value: record.buildNumber)
+            Section("Timing & Device") {
+                LabeledContent("Duration", value: "\(record.durationMs) ms")
+                LabeledContent("Started", value: record.startedAt.formatted(date: .complete, time: .complete))
+                LabeledContent("Device", value: record.deviceModel)
+                LabeledContent("iOS Version", value: record.osVersion)
+                LabeledContent("Build Number", value: record.buildNumber)
             }
         }
         .navigationTitle(record.probeID)
