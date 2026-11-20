@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SandboxLabCore
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+
+  app:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      # No .pbxproj is committed (Linux host has no Xcode); generate it
+      # deterministically from project.yml before building.
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: SandboxLabApp
+        run: xcodegen generate
+      - name: Build iOS app
+        # No signing credentials in CI: disable code signing for this build.
+        run: xcodebuild -project SandboxLabApp/SandboxLabApp.xcodeproj -scheme SandboxLabApp -destination 'generic/platform=iOS' -quiet build CODE_SIGNING_ALLOWED=NO
