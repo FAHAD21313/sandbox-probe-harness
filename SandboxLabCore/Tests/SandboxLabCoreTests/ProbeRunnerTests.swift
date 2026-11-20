@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 import SandboxLabCore
 
-private struct StubProbe: SecurityProbe {
+struct StubProbe: SecurityProbe {
     let id: String
     let title: String
     let category: ProbeCategory

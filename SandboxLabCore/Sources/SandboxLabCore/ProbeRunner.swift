@@ -53,4 +53,19 @@ public struct ProbeRunner: Sendable {
             buildNumber: device.buildNumber
         )
     }
+
+    /// Runs every probe in order and returns one raw record per probe.
+    /// `run` captures errors internally, so a failing probe never aborts the batch.
+    public func runAll(
+        _ probes: [any SecurityProbe],
+        device: any DeviceInfoProviding,
+        now: @escaping () -> Date = Date.init
+    ) async -> [ProbeRunRecord] {
+        var records: [ProbeRunRecord] = []
+        records.reserveCapacity(probes.count)
+        for probe in probes {
+            records.append(await run(probe, device: device, now: now))
+        }
+        return records
+    }
 }
