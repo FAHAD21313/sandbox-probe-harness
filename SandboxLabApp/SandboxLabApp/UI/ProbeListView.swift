@@ -41,15 +41,19 @@ struct ProbeListView: View {
             }
             .navigationTitle("Sandbox Lab")
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    NavigationLink("Log") {
-                        LogListView(store: store)
-                    }
-                    NavigationLink("Console") {
-                        ConsoleView(store: console)
-                    }
-                    NavigationLink("Settings") {
-                        SettingsView(store: store)
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        NavigationLink("Log") {
+                            LogListView(store: store)
+                        }
+                        NavigationLink("Console") {
+                            ConsoleView(store: console)
+                        }
+                        NavigationLink("Settings") {
+                            SettingsView(store: store)
+                        }
+                    } label: {
+                        Label("Menu", systemImage: "ellipsis.circle")
                     }
                 }
             }
@@ -94,6 +98,19 @@ struct ProbeListView: View {
         let record = await runner.run(probe, device: device)
         for line in record.output.split(separator: "\n") {
             await console.log(String(line))
+        }
+        // A failed probe leaves output empty and puts the details in error fields.
+        if let domain = record.errorDomain {
+            await console.log("Error domain: \(domain)")
+        }
+        if let code = record.errorCode {
+            await console.log("Error code: \(code)")
+        }
+        if let errno = record.rawErrno {
+            await console.log("errno: \(errno)")
+        }
+        if let message = record.errorMessage {
+            await console.log("Error: \(message)")
         }
         await console.log("Finished \(record.probeID) in \(record.durationMs) ms")
         return record
