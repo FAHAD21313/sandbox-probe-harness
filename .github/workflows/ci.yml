@@ -10,12 +10,21 @@ jobs:
         working-directory: SandboxLabCore
     steps:
       - uses: actions/checkout@v4
+      # swift-tools-version 6.1 needs a Swift >= 6.1 toolchain; ubuntu-latest
+      # may ship an older default, so install and pin the toolchain explicitly.
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '6.1'
       - run: swift test
 
   app:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
+      # Pin Xcode so swift-tools 6.1 (Xcode >= 16.3) is always available.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.3'
       # No .pbxproj is committed (Linux host has no Xcode); generate it
       # deterministically from project.yml before building.
       - name: Install XcodeGen
