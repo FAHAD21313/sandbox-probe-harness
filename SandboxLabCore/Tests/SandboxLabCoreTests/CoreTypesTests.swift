@@ -16,4 +16,14 @@ final class CoreTypesTests: XCTestCase {
         XCTAssertEqual(details.rawErrno, 1)
         XCTAssertEqual(details.message, "Operation not permitted")
     }
+
+    func testProbeErrorNeedsDirectMappingBecauseBridgingLosesRawErrno() {
+        let error = ProbeError(domain: "SandboxLabCore.Custom", code: 99, errnoValue: 13, message: "direct errno")
+        let bridged = error.probeDetails
+        // `as NSError` bridging replaces the authored domain/code/errno, so ProbeRunner
+        // must map a thrown ProbeError directly (see ProbeRunnerTests).
+        XCTAssertNotEqual(bridged.domain, error.domain)
+        XCTAssertNil(bridged.rawErrno)
+        XCTAssertNotEqual(bridged.message, error.message)
+    }
 }
