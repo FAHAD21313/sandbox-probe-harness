@@ -3,8 +3,8 @@
 ## حالة المستودع
 - مشروع **iOS جديد (greenfield)**: مختبر أمني لرصد سلوك ساندبوكس iOS على **iPhone غير jailbroken**. زر Run ينفّذ كوداً يكتبه المستخدم داخل ملف قالب فارغ؛ **وظيفة الوكيل بناء إطار التطبيق فقط، لا كتابة كود الاختبارات**.
 - النتائج **رصد خام** (نص/خطأ/زمن) تُحفظ في **SwiftData** محلياً بلا درجات أو توقعات مطابقة. البناء عبر GitHub Actions على macOS runner؛ الحالات تُشغَّل يدوياً على جهاز حقيقي.
-- وثيقة التصميم: `docs/superpowers/specs/2026-11-20-ios-sandbox-probe-harness-design.md` — اقرأها قبل أي عمل؛ لم تُعتمد بعد.
-- المستودع فيه الآن هذا الملف + الاسكلز + الوثيقة فقط (لا README ولا manifests بعد). اقرأ أي ملفات جديدة قبل افتراض أي convention.
+- وثيقة التصميم **معتمدة**: `docs/superpowers/specs/2026-11-20-ios-sandbox-probe-harness-design.md`، وخطة التنفيذ في `docs/superpowers/plans/2026-11-20-ios-sandbox-probe-harness.md`. اقرأهما قبل أي عمل.
+- البنية: `SandboxLabCore/` حزمة Swift للإطار (قابلة للاختبار على Linux)، `SandboxLabApp/` هدف iOS، `.github/workflows/ci.yml` للبناء. الـ `.xcodeproj` غير مودع؛ `README.md` يشرح `xcodegen generate`. اقرأ أي ملفات جديدة قبل افتراض أي convention.
 
 ## أسلوب العمل (تعليمات دائمة)
 - أنت **المدير والمفكر والمراجع الكبير** — لا تنفّذ كل شيء بنفسك. خطّط، فوّض، ثم راجع.
